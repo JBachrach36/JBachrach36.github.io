@@ -29,11 +29,8 @@ env:
   DECK_LINKS: 503Qlz2bTdoyFQcnQi85qL=/decks/vip-app
 
 jobs:
-  mirror:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,6 +52,13 @@ jobs:
         with:
           path: site
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
       - name: Publish to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
