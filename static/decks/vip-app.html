@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>UofM VIP App presentation | Jaden Bachrach</title>
+<style>
+:root{--bg:#0e0e10;--panel:#18181b;--line:#2a2a2e;--text:#f4f4f5;--muted:#a1a1aa;--accent:#ffffff}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;display:flex;flex-direction:column}
+a{color:inherit}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--line)}
+header .back{color:var(--muted);text-decoration:none;font-size:14px}header .back:hover{color:var(--text)}
+header h1{font-size:17px;font-weight:600;margin:0 auto 0 8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);text-decoration:none;font-size:14px;cursor:pointer;color:var(--text)}
+.btn:hover{border-color:#52525b}.btn.primary{background:var(--accent);color:#0e0e10;border-color:var(--accent)}
+
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 64px;position:relative;min-height:0}
+.stage{width:100%;max-width:calc((100vh - 230px) * 16 / 9);aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.stage img{width:100%;height:100%;object-fit:contain;display:block}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--text);font-size:22px;cursor:pointer}
+.nav:hover{border-color:#52525b}.nav:disabled{opacity:.3;cursor:default}.prev{left:12px}.next{right:12px}
+.bar{display:flex;align-items:center;justify-content:center;gap:16px;padding:0 20px 8px;color:var(--muted);font-size:14px}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:8px 20px 16px;scrollbar-width:thin}
+.thumbs button{flex:0 0 auto;width:128px;aspect-ratio:16/9;padding:0;border:2px solid transparent;border-radius:6px;overflow:hidden;background:#000;cursor:pointer;opacity:.6}
+.thumbs button.on{border-color:var(--accent);opacity:1}.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+:fullscreen main{padding:0}:fullscreen .stage{max-width:calc(100vh * 16 / 9);border-radius:0}
+@media (max-width:700px){main{padding:12px}.nav{display:none}.stage{max-width:100%}}
+</style></head>
+<body>
+<header>
+  <a class="back" href="../">&larr; Portfolio</a>
+  <h1>UofM VIP App presentation</h1>
+  <a class="btn primary" href="https://www.figma.com/deck/503Qlz2bTdoyFQcnQi85qL/UofM-VIP-App-Presentation" target="_blank" rel="noopener">Open in Figma (with animations)</a>
+  <a class="btn" href="vip-app.pdf" download>Download PDF</a>
+  <button class="btn" id="fs" type="button">Full screen</button>
+</header>
+<main>
+  <button class="nav prev" id="prev" aria-label="Previous slide">&#8249;</button>
+  <div class="stage" id="stage"><img id="slide" src="vip-app-slides/01.webp" alt="Slide 1 of 8"></div>
+  <button class="nav next" id="next" aria-label="Next slide">&#8250;</button>
+</main>
+<div class="bar"><span id="count">1 / 8</span><span>Use arrow keys to move between slides</span></div>
+<nav class="thumbs" id="thumbs" aria-label="Slides"></nav>
+<script>
+(function(){
+  var n=8, i=0, slug="vip-app";
+  function src(k){return slug+"-slides/"+String(k+1).padStart(2,"0")+".webp";}
+  var img=document.getElementById("slide"), cnt=document.getElementById("count"),
+      prev=document.getElementById("prev"), next=document.getElementById("next"),
+      thumbs=document.getElementById("thumbs");
+  for(var k=0;k<n;k++){
+    var b=document.createElement("button"); b.type="button"; b.setAttribute("aria-label","Slide "+(k+1));
+    b.innerHTML='<img loading="lazy" alt="" src="'+src(k)+'">';
+    b.onclick=(function(k){return function(){go(k);};})(k); thumbs.appendChild(b);
+  }
+  function go(k){
+    i=Math.max(0,Math.min(n-1,k)); img.src=src(i); img.alt="Slide "+(i+1)+" of "+n;
+    cnt.textContent=(i+1)+" / "+n; prev.disabled=i===0; next.disabled=i===n-1;
+    Array.prototype.forEach.call(thumbs.children,function(t,j){t.className=j===i?"on":"";});
+    var t=thumbs.children[i]; if(t&&t.scrollIntoView) t.scrollIntoView({block:"nearest",inline:"center"});
+    if(i+1<n) new Image().src=src(i+1);
+    try{history.replaceState(null,"","#"+(i+1));}catch(e){}
+  }
+  prev.onclick=function(){go(i-1);}; next.onclick=function(){go(i+1);};
+  document.getElementById("stage").onclick=function(e){var r=this.getBoundingClientRect(); go(e.clientX-r.left<r.width/3?i-1:i+1);};
+  document.addEventListener("keydown",function(e){
+    if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){e.preventDefault();go(i+1);}
+    else if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();go(i-1);}
+    else if(e.key==="Home"){go(0);} else if(e.key==="End"){go(n-1);}
+  });
+  document.getElementById("fs").onclick=function(){
+    var el=document.documentElement;
+    if(document.fullscreenElement) document.exitFullscreen(); else if(el.requestFullscreen) el.requestFullscreen();
+  };
+  var h=parseInt((location.hash||"").slice(1),10); go(h>0?h-1:0);
+})();
+</script>
+</body></html>
