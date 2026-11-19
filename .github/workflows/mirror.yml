@@ -1,0 +1,58 @@
+# Keeps a static, self-contained copy of the Framer portfolio on GitHub Pages.
+# The Pages link never changes; each run replaces the copy with the latest
+# published Framer version plus the deck pages in static/. Runs every 6 hours,
+# on every push, and on demand: Actions tab -> "Mirror Framer site" -> "Run workflow".
+name: Mirror Framer site
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  SOURCE_URL: https://jadenbachrach.framer.website
+  # Figma file links in the portfolio that should open the mirror's own deck
+  # pages instead (those pages link back to Figma for the animated version).
+  DECK_LINKS: 503Qlz2bTdoyFQcnQi85qL=/decks/vip-app,ACFTsV3pUULP7yZoHkb7nZ=/decks/umgpt
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Copy the Framer site
+        env:
+          MIRROR_URL: ${{ steps.pages.outputs.base_url }}
+          OUT_DIR: site
+        run: python3 mirror.py
+
+      - name: Add deck pages and PDFs
+        run: if [ -d static ]; then cp -R static/. site/; fi
+
+      - name: Upload copy
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Publish to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
