@@ -6,3 +6,4 @@ https://www.figma.com/api/mcp/asset/57a62795-b53b-4b25-99dd-d643f0c6f6aa.pdf
 https://www.figma.com/api/mcp/asset/35e28dbc-515c-4758-aac7-8f87293a702d.pdf
 https://www.figma.com/api/mcp/asset/f0b0c898-4d36-42ed-8169-3da4950bb355.pdf
 https://www.figma.com/api/mcp/asset/10312d93-85b3-43b4-b782-ce67f990a882.pdf
+

@@ -135,7 +135,26 @@ if DECK_LINKS:
     )
 
 
+# FORCE_THEME=dark makes the copy always use the site's dark theme, whatever
+# the visitor's system setting: dark-mode media queries (in CSS and in scripts'
+# matchMedia checks) become always true and light-mode ones never true.
+FORCE_THEME = os.environ.get("FORCE_THEME", "").strip().lower()
+_DARK_RE = re.compile(r"prefers-color-scheme\s*:\s*dark")
+_LIGHT_RE = re.compile(r"prefers-color-scheme\s*:\s*light")
+
+
+def force_theme(text):
+    if FORCE_THEME == "dark":
+        text = _DARK_RE.sub("min-width:0px", text)
+        text = _LIGHT_RE.sub("max-width:0px", text)
+    elif FORCE_THEME == "light":
+        text = _DARK_RE.sub("max-width:0px", text)
+        text = _LIGHT_RE.sub("min-width:0px", text)
+    return text
+
+
 def rewrite(text):
+    text = force_theme(text)
     if DECK_RE:
         text = DECK_RE.sub(_deck_sub, text)
     for host in ASSET_HOSTS:
@@ -240,6 +259,8 @@ def main():
         canonical = SOURCE_URL + (path if path != "/" else "/")
         html = rewrite(html)
         extra = HEAD_EXTRA.format(canonical=canonical)
+        if FORCE_THEME in ("dark", "light"):
+            extra += '<meta name="color-scheme" content="%s">\n<style>:root{color-scheme:%s}</style>\n' % (FORCE_THEME, FORCE_THEME)
         if "</head>" in html:
             html = html.replace("</head>", extra + "</head>", 1)
         else:

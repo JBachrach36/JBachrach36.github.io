@@ -22,6 +22,8 @@ concurrency:
 
 env:
   SOURCE_URL: https://jadenbachrach.framer.website
+  # Always show the dark (blue) theme, whatever the visitor's system setting.
+  FORCE_THEME: dark
   # Figma file links in the portfolio that should open the mirror's own deck
   # pages instead (those pages link back to Figma for the animated version).
   DECK_LINKS: 503Qlz2bTdoyFQcnQi85qL=/decks/vip-app
