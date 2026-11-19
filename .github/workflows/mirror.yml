@@ -24,7 +24,7 @@ env:
   SOURCE_URL: https://jadenbachrach.framer.website
   # Figma file links in the portfolio that should open the mirror's own deck
   # pages instead (those pages link back to Figma for the animated version).
-  DECK_LINKS: 503Qlz2bTdoyFQcnQi85qL=/decks/vip-app,ACFTsV3pUULP7yZoHkb7nZ=/decks/umgpt
+  DECK_LINKS: 503Qlz2bTdoyFQcnQi85qL=/decks/vip-app
 
 jobs:
   mirror:

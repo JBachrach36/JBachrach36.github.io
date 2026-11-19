@@ -142,10 +142,13 @@ def main(out):
     decks_dir = os.path.join(out, "decks")
     cards = []
     for d in DECKS:
-        imgs = sorted(f for f in os.listdir(os.path.join(decks_dir, d["slug"] + "-slides")) if f.endswith(".webp"))
+        slide_dir = os.path.join(decks_dir, d["slug"] + "-slides")
+        if not os.path.isdir(slide_dir) or not os.path.exists(os.path.join(decks_dir, d["slug"] + ".pdf")):
+            print(d["slug"], "not imported yet, skipping")
+            continue
+        imgs = sorted(f for f in os.listdir(slide_dir) if f.endswith(".webp"))
         count = len(imgs)
         assert count and imgs[0] == "01.webp", d["slug"]
-        assert os.path.exists(os.path.join(decks_dir, d["slug"] + ".pdf")), d["slug"]
         fields = dict(title=html.escape(d["title"]), figma=html.escape(d["figma"]), slug=d["slug"],
                       count=count, style=STYLE, slug_js=json.dumps(d["slug"]))
         with open(os.path.join(decks_dir, d["slug"] + ".html"), "w") as f:
