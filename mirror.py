@@ -259,8 +259,9 @@ def main():
         canonical = SOURCE_URL + (path if path != "/" else "/")
         html = rewrite(html)
         extra = HEAD_EXTRA.format(canonical=canonical)
-        if FORCE_THEME in ("dark", "light"):
-            extra += '<meta name="color-scheme" content="%s">\n<style>:root{color-scheme:%s}</style>\n' % (FORCE_THEME, FORCE_THEME)
+        # No color-scheme declaration here on purpose: declaring one makes
+        # browsers paint an opaque backdrop behind embeds (like the Spline
+        # viewer) whose own color scheme differs, turning them into white boxes.
         if "</head>" in html:
             html = html.replace("</head>", extra + "</head>", 1)
         else:
